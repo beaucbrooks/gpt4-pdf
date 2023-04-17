@@ -6,3 +6,12 @@ export type Message = {
   isStreaming?: boolean;
   sourceDocs?: Document[];
 };
+
+export interface ChatPage {
+  commonStrings: {
+    headerText: string;
+    initialAiMessage: string;
+    defaultInputMessage: string;
+    waitingOnResponseMessage: string;
+  };
+}

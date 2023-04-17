@@ -3,9 +3,10 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { Milvus } from "langchain/vectorstores/milvus"
 import { CustomPDFLoader } from '@/utils/customPDFLoader';
 import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
+import config from '@/config/config';
 
 /* Name of directory to retrieve your files from */
-const filePath = 'docs';
+const filePath = config.documentFilePath;
 
 export const run = async () => {
   try {
@@ -29,7 +30,7 @@ export const run = async () => {
     console.log('creating vector store...');    
     //embed the PDF documents using Milvus
     await Milvus.fromDocuments(docs, new OpenAIEmbeddings(), {
-      collectionName: "initialstore",
+      collectionName: config.vectorStoreName,
     });
     
   } catch (error) {

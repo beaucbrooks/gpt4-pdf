@@ -1,11 +1,12 @@
 import { useRef, useState, useEffect } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
-import { Message } from '@/types/chat';
+import { Message, ChatPage } from '@/types/chat';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import LoadingDots from '@/components/ui/LoadingDots';
 import { Document } from 'langchain/document';
+import config from '@/config/config';
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +14,24 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-export default function Home() {
+export async function getStaticProps() {
+  const publicConfig = {
+    initialAiMessage: config.initialAiMessage,
+    defaultInputMessage: config.defaultInputMessage,
+    waitingOnResponseMessage: config.waitingOnResponse,
+    headerText: config.chatTitle,
+  }
+
+  const props: ChatPage = {
+    commonStrings: publicConfig,
+  };
+
+  return {
+    props
+  };
+}
+
+export default function Home(props: ChatPage) {  
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +43,7 @@ export default function Home() {
   }>({
     messages: [
       {
-        message: 'Hi, what would you like to learn about this legal case?',
+        message: props.commonStrings.initialAiMessage,
         type: 'apiMessage',
       },
     ],
@@ -125,7 +143,7 @@ export default function Home() {
       <Layout>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With Your Legal Docs
+            {props.commonStrings.headerText}
           </h1>
           <main className={styles.main}>
             <div className={styles.cloud}>
@@ -223,8 +241,8 @@ export default function Home() {
                     name="userInput"
                     placeholder={
                       loading
-                        ? 'Waiting for response...'
-                        : 'What is this legal case about?'
+                        ? props.commonStrings.waitingOnResponseMessage
+                        : props.commonStrings.defaultInputMessage
                     }
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
